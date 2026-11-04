@@ -1,0 +1,6 @@
+# Allowlist: ignore everything, then re-include only what this repo permits.
+*
+!*/
+!*.md
+!.gitignore
+!.github/workflows/*.yml

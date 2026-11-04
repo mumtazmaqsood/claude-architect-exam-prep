@@ -1,0 +1,27 @@
+name: Markdown only
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  check-file-types:
+    name: Only Markdown files allowed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Checks every tracked file in the result (for PRs, the merge result),
+      # not just the diff. Allowed: *.md, .gitignore, workflow files.
+      - name: Check tracked files
+        run: |
+          bad=$(git ls-files | grep -vE '(\.md$|^\.gitignore$|^\.github/workflows/[^/]+\.yml$)' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::Non-Markdown files found. Only .md files are allowed in this repo:"
+            echo "$bad" | while read -r f; do echo "::error file=$f::Not a Markdown file: $f"; done
+            exit 1
+          fi
+          echo "All tracked files are allowed:"
+          git ls-files
